@@ -15,6 +15,19 @@ export const Button: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({ className,
     ></button>;
 };
 
+export const ButtonLink: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({ className, ...args }) => {
+    return <button
+        className={classnames(
+            className,
+            {
+                "text-blue-700": !args.disabled,
+                "cursor-default text-gray-300": args.disabled,
+            }
+        )}
+        {...args}
+    ></button>;
+};
+
 export const ButtonLg: FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({ className, ...args }) => {
     return <button
         className={classnames(

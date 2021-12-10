@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "deploy": "next build && next export && firebase deploy"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +44,8 @@
     "@types/tailwindcss": "^2.2.4",
     "@types/uuid": "^8.3.3",
     "autoprefixer": "^10.4.0",
+    "eslint": "8.4.1",
+    "eslint-config-next": "12.0.7",
     "postcss": "^8.4.4",
     "tailwindcss": "^2.2.19",
     "typescript": "^4.5.2"

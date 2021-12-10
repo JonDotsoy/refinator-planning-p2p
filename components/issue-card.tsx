@@ -24,21 +24,29 @@ export const IssueCard: FC<IssueCardProps> = ({ issue, onUpdateDescriptionIssue,
     }
 
     return <div className="flex border p-2 rounded flex-col border-gray-200">
-        <div className="flex-1 space-y-4">
-            <span className="text-sm text-gray-300 block">{issue.id}</span>
-            {!editing && issue.description}
-            {editing && <textarea
-                className="w-full border border-gray-300"
-                defaultValue={description}
-                onChange={(e) => setDescription(e.target.value)}
-                autoFocus
-            ></textarea>}
+        <div className="flex flex-row space-x-4">
+            {issue.level && <div>
+                <div className="px-4 text-4xl text-blue-400">{issue.level}</div>
+            </div>
+            }
+            <div className="space-y-4">
+                <div className="flex-1 space-y-4">
+                    <span className="text-sm text-gray-300 block">{issue.id}</span>
+                    {!editing && issue.description}
+                    {editing && <textarea
+                        className="w-full border border-gray-300"
+                        defaultValue={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        autoFocus
+                    ></textarea>}
+                </div>
+                <div className="space-x-2">
+                    <Button onClick={() => onSelectIssue?.(issue)}>Seleccionar</Button>
+                    {!editing && <Button onClick={() => setEditing(true)}>Editar</Button>}
+                    {editing && <Button onClick={() => updateHandler()}>Guardar</Button>}
+                    <Button onClick={() => onDeleteIssue?.(issue)}>Eliminar</Button>
+                </div>
+            </div>
         </div>
-        <div className="space-x-2">
-            <Button onClick={() => onSelectIssue?.(issue)}>Seleccionar</Button>
-            {!editing && <Button onClick={() => setEditing(true)}>Editar</Button>}
-            {editing && <Button onClick={() => updateHandler()}>Guardar</Button>}
-            <Button onClick={() => onDeleteIssue?.(issue)}>Eliminar</Button>
-        </div>
-    </div>;
+    </div>
 }

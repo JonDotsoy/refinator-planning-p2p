@@ -5,5 +5,7 @@ export const isIssue = (value: any): value is Issue => {
     if (value === null) return false;
     if (typeof value.id !== 'string') return false;
     if (typeof value.description !== 'string') return false;
+    if (value.level !== undefined && typeof value.level !== 'string') return false;
+    if (value.voting !== undefined && typeof value.voting !== 'object') return false;
     return true
 }

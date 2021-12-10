@@ -1,5 +1,5 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import { Button } from "./atoms/button";
+import React, { FC, Fragment, useEffect, useMemo, useState } from "react";
+import { Button, ButtonLink } from "./atoms/button";
 import { useRoomConnection } from "./use-room-connection";
 import { useRoomId } from "./use-room-id";
 import { v4 as uuid } from 'uuid'
@@ -11,26 +11,32 @@ import classNames from "classnames";
 import * as c from 'tailwindcss/colors';
 import { Timestamp } from "firebase/firestore";
 import { IssueCard } from "./issue-card";
+import { useQueryParams } from "./use-query-params";
+
+const percentage = new Intl.NumberFormat('es-CL', {
+    style: 'percent',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+});
+
+const number = new Intl.NumberFormat('es-CL', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+});
 
 const bgColors = [
-    'bg-pink-200',
-    'bg-red-200',
-    'bg-gray-200',
-    'bg-green-200',
-    'bg-yellow-200',
     'bg-blue-200',
-    'bg-orange-200',
-    'bg-teal-200',
-    'bg-purple-200',
-    'bg-orange-400',
     'bg-blue-400',
+    'bg-green-200',
     'bg-green-400',
-    'bg-yellow-400',
-    'bg-gray-400',
-    'bg-red-400',
-    'bg-purple-400',
+    'bg-pink-200',
     'bg-pink-400',
-    'bg-teal-400',
+    'bg-purple-200',
+    'bg-purple-400',
+    'bg-red-200',
+    'bg-red-400',
+    'bg-yellow-200',
+    'bg-yellow-400',
 ].sort(() => Math.random() - 0.5);
 
 const bgColorByChar = (char: string) => {
@@ -40,8 +46,10 @@ const bgColorByChar = (char: string) => {
 
 
 export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
+    const [queryDebug] = useQueryParams('debug')
     const [, setRoomId] = useRoomId();
     const e = useRoomConnection(roomId);
+    const modeDebug = queryDebug === 'on'
 
     return <>
         <div className="flex justify-center">
@@ -66,17 +74,73 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                         </div>
                     </>}
                     {e.issue && <>
-                        <div className="bg-white py-8 rounded border border-blue-100 text-center flex flex-col justify-center items-center">
+                        <div className="bg-white py-8 rounded border border-blue-100 text-center flex flex-col justify-center items-center space-y-2">
                             <div className="border py-2 px-4 rounded flex flex-col items-start text-xl shadow bg-white">
                                 <span className="block text-gray-300 text-sm">{e.issue.id}</span>
                                 <div>{e.issue.description}</div>
+                            </div>
+                            <div>
+                                {
+                                    e.statusVoting.status === 'none' &&
+                                    <Button onClick={() => e.changeTypeRoomVoting('inVoting')}>Iniciar votación</Button>
+                                }
+                                {
+                                    e.statusVoting.status === 'inVoting' &&
+                                    <Button className="bg-blue-300 text-white border-blue-400 hover:bg-blue-400" onClick={() => e.changeTypeRoomVoting('done')}>Terminar votación</Button>
+                                }
+                                {
+                                    e.statusVoting.status === 'done' && <>
+                                        <div className="flex flex-col items-center">
+                                            <div className="flex-1">
+                                                <ButtonLink onClick={() => e.changeTypeRoomVoting('inVoting')}>Reiniciar votación</ButtonLink>
+                                            </div>
+                                            <div>
+                                                <h3>Resultados:</h3>
+
+                                                <div className="grid grid-cols-5 grid-flow-row gap-4">
+                                                    <div className="text-gray-500">Nivel</div>
+                                                    <div className="text-gray-500">Conteo</div>
+                                                    <div className="text-gray-500">Porcentaje</div>
+                                                    <div className="col-span-2"></div>
+
+                                                    {Object.entries(e.resultVotingCurrentIssue.result).map(([level, count]) => {
+                                                        if (count === 0) return null
+
+                                                        return <Fragment key={level}>
+                                                            <div><span>{level}</span></div>
+                                                            <div>{number.format(count)}</div>
+                                                            <div className="font-bold">{percentage.format(count / e.resultVotingCurrentIssue.total)}</div>
+                                                            <div className="col-span-2">
+                                                                <button className="border px-2" onClick={() => e.markLevelOnIssue(level)}>Marcar tarea con esta nivel</button>
+                                                            </div>
+                                                        </Fragment>
+
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                }
                             </div>
                             <button onClick={e.cleanSelectIssue} className="text-blue-700 text-opacity-70">Quitar selección</button>
                         </div>
                     </>}
                 </section>
 
-                <section className="flex space-x-4 justify-center ">
+                {
+                    e.statusVoting.status === 'inVoting' &&
+                    <section className="flex flex-col items-center">
+                        <p>Ahora puedes votar, selecciona una opción:</p>
+                        <div>
+                            {e.levels.map((level, index) => {
+                                return <Button key={`${index}-${level}`} className={classNames({ 'border-blue-600 text-blue-600 shadow': e.selfVotingCurrentIssue?.value === level })} onClick={() => e.voting(level)}>{level}</Button>
+                            })}
+                            <Button onClick={() => e.removeVoting()}>Eliminar voto</Button>
+                        </div>
+                    </section>
+                }
+
+                <section className="flex space-x-4 justify-center flex-row">
                     {e.identifications.map(i => <div
                         key={i.uid}
                         className="flex flex-col items-center space-y-2"
@@ -89,7 +153,7 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                                 "text-center text-5xl flex justify-center items-center border rounded-lg",
                                 {
                                     "border-gray-200 text-gray-200": i.observer,
-                                    [bgColorByChar(i.name[0])]: !i.observer,
+                                    [bgColorByChar(i.name?.[0])]: !i.observer,
                                     "border-gray-400 hover:shadow-md": !i.observer,
                                 },
                             )}
@@ -124,10 +188,12 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                     </>}
                 </section>
 
-                <div>
-                    {/* <hr /> */}
-                    <InspectPre src={e}></InspectPre>
-                </div>
+                {
+                    modeDebug && <div>
+                        {/* <hr /> */}
+                        <InspectPre src={e}></InspectPre>
+                    </div>
+                }
             </div>
         </div>
     </>;
