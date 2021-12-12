@@ -1,9 +1,8 @@
 import { arrayRemove, arrayUnion, deleteField, doc, DocumentData, FieldPath, Timestamp, updateDoc } from 'firebase/firestore';
 import { useEffect, useMemo, useState } from 'react';
-import { firestore } from './firebase/firebase';
+import { firestore, l } from './firebase/firebase';
 import { v4 as uuid } from 'uuid'
 import { createAlertLog } from './alert-logs';
-import once from 'lodash/once';
 import { isIssue } from './is-issue';
 import { Issue } from './types/issue';
 import { isStatusVoting } from './isStatusVoting';
@@ -13,6 +12,10 @@ import { localUid } from './localUid';
 
 
 export const useRoomConnection = (roomId: string) => {
+    useEffect(() => {
+        l('room_connection', { roomId });
+    }, [roomId]);
+
     const levels = useMemo(() => [
         'XS',
         'S',
@@ -144,9 +147,11 @@ export const useRoomConnection = (roomId: string) => {
         });
     };
 
-    const removeIssue = (item: any) => update({
-        [`issues`]: arrayRemove(item),
-    });
+    const removeIssue = (itemId: any) => {
+        update({
+            [`issuesValues.${itemId}`]: deleteField(),
+        });
+    }
 
     const updateDescriptionIssue = (issue: Issue, description: string) => {
         update({

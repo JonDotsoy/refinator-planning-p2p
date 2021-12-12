@@ -1,4 +1,6 @@
+import { setUserId } from 'firebase/analytics';
 import { v4 as uuid } from 'uuid';
+import { analytics } from './firebase/firebase';
 
 export const getLocalUid = () => {
     if (globalThis.localStorage) {
@@ -14,3 +16,5 @@ export const getLocalUid = () => {
 }
 
 export const localUid = getLocalUid();
+
+setUserId(analytics, localUid, { global: true });

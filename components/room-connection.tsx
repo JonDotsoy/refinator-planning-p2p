@@ -180,7 +180,7 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                             {e.issues.map((i, index) => <IssueCard
                                 key={i.id}
                                 issue={i}
-                                onDeleteIssue={(i) => e.removeIssue(i)}
+                                onDeleteIssue={(i) => e.removeIssue(i.id)}
                                 onUpdateDescriptionIssue={(i, description) => e.updateDescriptionIssue(i, description)}
                                 onSelectIssue={(i) => e.selectIssue(i)}
                             />)}
