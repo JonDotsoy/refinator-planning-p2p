@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "planning-p2p",
+    "staging": "planning-p2p"
+  },
+  "targets": {}
+}
