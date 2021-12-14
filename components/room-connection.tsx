@@ -43,7 +43,7 @@ const createNextColor = () => {
     let nextColorNumber = 0;
     return () => {
         const indexColor = nextColorNumber % bgColors.length;
-        nextColorNumber++;
+        nextColorNumber += 1;
         return bgColors[indexColor];
     }
 }
@@ -62,11 +62,6 @@ const createPickColorByKey = () => {
 }
 
 const pickColorByKey = createPickColorByKey();
-
-const bgColorByChar = (char: string) => {
-    const index = char.charCodeAt(0) % bgColors.length
-    return bgColors[index]
-}
 
 
 export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
@@ -177,7 +172,7 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                                 "text-center text-5xl flex justify-center items-center border rounded-lg",
                                 {
                                     "border-gray-200 text-gray-200": i.observer,
-                                    [pickColorByKey(i.id)]: !i.observer,
+                                    [pickColorByKey(i.uid)]: !i.observer,
                                     "border-gray-400 hover:shadow-md": !i.observer,
                                 },
                             )}
