@@ -1,7 +1,6 @@
 import { useRouter } from "next/dist/client/router";
 import React, { FC } from "react";
-import { Button, ButtonLg } from "../components/atoms/button";
-import { useQueryParams } from "../components/use-query-params";
+import { ButtonLg } from "../components/atoms/button";
 import { v4 as uuid } from 'uuid'
 import { RoomConnection } from "../components/room-connection";
 import { useRoomId } from "../components/use-room-id";

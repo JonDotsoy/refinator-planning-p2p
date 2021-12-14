@@ -1,6 +1,5 @@
 import React, { FC, useState } from "react";
 import { Button } from "./atoms/button";
-import { InspectPre } from "./Inspect";
 import { Issue } from "./types/issue";
 
 interface IssueCardProps {
