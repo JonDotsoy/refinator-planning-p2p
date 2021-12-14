@@ -23,7 +23,6 @@
     "dat-swarm-defaults": "^1.0.2",
     "discovery-swarm": "^6.1.0",
     "discovery-swarm-web": "^2.0.0",
-    "firebase": "^9.6.0",
     "freedom": "^0.6.36",
     "freedom-for-chrome": "^0.4.28",
     "hyper-sdk": "^3.0.9",
@@ -46,6 +45,7 @@
     "autoprefixer": "^10.4.0",
     "eslint": "8.4.1",
     "eslint-config-next": "12.0.7",
+    "firebase": "^9.6.1",
     "postcss": "^8.4.4",
     "tailwindcss": "^2.2.19",
     "typescript": "^4.5.2"
