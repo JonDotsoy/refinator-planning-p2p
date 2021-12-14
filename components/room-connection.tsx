@@ -39,6 +39,30 @@ const bgColors = [
     'bg-yellow-400',
 ].sort(() => Math.random() - 0.5);
 
+const createNextColor = () => {
+    let nextColorNumber = 0;
+    return () => {
+        const indexColor = nextColorNumber % bgColors.length;
+        nextColorNumber++;
+        return bgColors[indexColor];
+    }
+}
+
+const nextColor = createNextColor();
+
+const createPickColorByKey = () => {
+    const map = new Map<string, string>();
+    return (key: string) => {
+        const resStored = map.get(key);
+        if (resStored) return resStored;
+        const newColor = nextColor();
+        map.set(key, newColor);
+        return newColor;
+    }
+}
+
+const pickColorByKey = createPickColorByKey();
+
 const bgColorByChar = (char: string) => {
     const index = char.charCodeAt(0) % bgColors.length
     return bgColors[index]
@@ -153,7 +177,7 @@ export const RoomConnection: FC<{ roomId: string }> = ({ roomId }) => {
                                 "text-center text-5xl flex justify-center items-center border rounded-lg",
                                 {
                                     "border-gray-200 text-gray-200": i.observer,
-                                    [bgColorByChar(i.name?.[0])]: !i.observer,
+                                    [pickColorByKey(i.id)]: !i.observer,
                                     "border-gray-400 hover:shadow-md": !i.observer,
                                 },
                             )}

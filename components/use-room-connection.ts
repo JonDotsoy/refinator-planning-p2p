@@ -149,6 +149,7 @@ export const useRoomConnection = (roomId: string) => {
 
     const removeIssue = (itemId: any) => {
         update({
+            [`issues`]: arrayRemove(itemId),
             [`issuesValues.${itemId}`]: deleteField(),
         });
     }
